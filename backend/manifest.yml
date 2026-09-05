@@ -6,4 +6,6 @@ applications:
     random-route: true
     path: target/tracker-api-0.1.0.jar
     buildpacks:
-      - sap_java_buildpack
+      - sap_java_buildpack_jakarta
+    env:
+      JBP_CONFIG_SAP_MACHINE_JRE: '{ version: 21.+ }'
