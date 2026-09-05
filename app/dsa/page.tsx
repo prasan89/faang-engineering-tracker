@@ -42,6 +42,12 @@ export default function DsaPage() {
   const patterns = useMemo(() => ['ALL', ...Array.from(new Set(problems.map((p) => p.pattern))).sort()], [problems]);
   const difficulties = useMemo(() => ['ALL', ...Array.from(new Set(problems.map((p) => p.difficulty))).sort()], [problems]);
 
+  const patternProgress = useMemo(() => patterns.filter((x) => x !== 'ALL').map((name) => {
+    const items = problems.filter((p) => p.pattern === name);
+    const done = items.filter((p) => p.status === 'SOLVED').length;
+    return { name, done, total: items.length, pct: Math.round((done / Math.max(items.length, 1)) * 100) };
+  }), [patterns, problems]);
+
   const filtered = problems.filter((p) =>
     (pattern === 'ALL' || p.pattern === pattern) &&
     (difficulty === 'ALL' || p.difficulty === difficulty) &&
@@ -51,7 +57,7 @@ export default function DsaPage() {
 
   async function updateProblem(problem: Problem, nextStatus: Problem['status']) {
     const previous = problem;
-    const next = { ...problem, status: nextStatus, solved_at: undefined };
+    const next = { ...problem, status: nextStatus };
     setProblems((items) => items.map((p) => p.id === problem.id ? next : p));
     setSaving(problem.id);
     setError(false);
@@ -93,12 +99,24 @@ export default function DsaPage() {
         <div className="metric"><span>Solved</span><strong>{solved}</strong><small>/ {TARGET} target</small></div>
         <div className="metric"><span>In review</span><strong>{review}</strong><small>needs another pass</small></div>
         <div className="metric"><span>Remaining</span><strong>{Math.max(TARGET - solved, 0)}</strong><small>to reach target</small></div>
-        <div className="metric"><span>Library</span><strong>{problems.length}</strong><small>currently loaded</small></div>
+        <div className="metric"><span>Library</span><strong>{problems.length}</strong><small>curated problems</small></div>
       </section>
 
       <section className="card dsa-progress-card">
         <div className="section-head"><div><h2>300-problem target</h2><p className="muted">Build breadth first, then repeatedly revisit weak patterns.</p></div><strong>{targetPct}%</strong></div>
         <div className="progress"><i style={{ width: `${targetPct}%` }} /></div>
+      </section>
+
+      <section className="card pattern-card">
+        <div className="section-head"><div><h2>Pattern mastery</h2><p className="muted">Your solved percentage by interview pattern.</p></div></div>
+        <div className="pattern-grid">
+          {patternProgress.map((x) => (
+            <button key={x.name} className={`pattern-progress ${pattern === x.name ? 'selected' : ''}`} onClick={() => setPattern(x.name)}>
+              <div><span>{x.name}</span><b>{x.done}/{x.total}</b></div>
+              <div className="bar"><i style={{ width: `${x.pct}%` }} /></div>
+            </button>
+          ))}
+        </div>
       </section>
 
       <section className="card filters">
