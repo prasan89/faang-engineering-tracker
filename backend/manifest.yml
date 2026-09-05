@@ -6,7 +6,4 @@ applications:
     random-route: true
     path: target/tracker-api-0.1.0.jar
     buildpacks:
-      - java_buildpack
-    env:
-      SPRING_PROFILES_ACTIVE: cloud
-      JBP_CONFIG_OPEN_JDK_JRE: '{ jre: { version: 21.+ } }'
+      - sap_java_buildpack
