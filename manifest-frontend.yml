@@ -1,0 +1,13 @@
+---
+applications:
+  - name: faang-engineering-tracker-web
+    memory: 512M
+    disk_quota: 1G
+    random-route: true
+    buildpacks:
+      - nodejs_buildpack
+    command: npm start
+    env:
+      NODE_ENV: production
+      NEXT_TELEMETRY_DISABLED: "1"
+      BACKEND_URL: https://REPLACE_WITH_BACKEND_ROUTE
