@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "engines": {
-    "node": ">=20 <23"
+    "node": "22.x"
   },
   "dependencies": {
     "next": "latest",
