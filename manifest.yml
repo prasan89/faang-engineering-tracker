@@ -4,6 +4,7 @@ applications:
     memory: 512M
     disk_quota: 1G
     random-route: true
+    stack: cflinuxfs5
     buildpacks:
       - nodejs_buildpack
     command: npm run start -- -p $PORT
