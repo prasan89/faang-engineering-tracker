@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "next build"
   },
   "engines": {
     "node": "22.x"
@@ -14,9 +15,7 @@
   "dependencies": {
     "next": "latest",
     "react": "latest",
-    "react-dom": "latest"
-  },
-  "devDependencies": {
+    "react-dom": "latest",
     "typescript": "latest",
     "@types/node": "latest",
     "@types/react": "latest",
