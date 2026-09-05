@@ -1,0 +1,12 @@
+---
+applications:
+  - name: faang-engineering-tracker-ui
+    memory: 512M
+    disk_quota: 1G
+    random-route: true
+    buildpacks:
+      - nodejs_buildpack
+    command: npm run start -- -p $PORT
+    env:
+      NODE_ENV: production
+      BACKEND_URL: https://faang-engineering-tracker-api-insightful-bongo-go.cfapps.us10-001.hana.ondemand.com
