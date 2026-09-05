@@ -30,3 +30,21 @@ CREATE TABLE IF NOT EXISTS recognition_activity (
     url VARCHAR(1000),
     notes VARCHAR(2000)
 );
+
+CREATE TABLE IF NOT EXISTS dsa_problem (
+    id VARCHAR(100) PRIMARY KEY,
+    title VARCHAR(250) NOT NULL,
+    url VARCHAR(1000) NOT NULL,
+    difficulty VARCHAR(20) NOT NULL,
+    pattern VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS dsa_progress (
+    problem_id VARCHAR(100) PRIMARY KEY,
+    status VARCHAR(30) NOT NULL DEFAULT 'NOT_STARTED',
+    attempts INT NOT NULL DEFAULT 0,
+    time_minutes INT NOT NULL DEFAULT 0,
+    notes VARCHAR(2000),
+    solved_at TIMESTAMP,
+    CONSTRAINT fk_dsa_problem FOREIGN KEY (problem_id) REFERENCES dsa_problem(id)
+);
