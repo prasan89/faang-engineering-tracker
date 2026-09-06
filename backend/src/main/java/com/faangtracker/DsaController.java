@@ -1,5 +1,6 @@
 package com.faangtracker;
 
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Map;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +39,7 @@ public class DsaController {
     int attempts = body.get("attempts") instanceof Number n ? n.intValue() : 0;
     int minutes = body.get("timeMinutes") instanceof Number n ? n.intValue() : 0;
     String notes = body.get("notes") instanceof String s ? s : null;
-    Instant solvedAt = "SOLVED".equals(nextStatus) ? Instant.now() : null;
+    Timestamp solvedAt = "SOLVED".equals(nextStatus) ? Timestamp.from(Instant.now()) : null;
 
     jdbc.update("""
       INSERT INTO dsa_progress (problem_id, status, attempts, time_minutes, notes, solved_at)
