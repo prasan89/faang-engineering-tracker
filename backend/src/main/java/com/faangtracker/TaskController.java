@@ -26,8 +26,13 @@ public class TaskController {
     if (!(id instanceof String taskId) || taskId.isBlank() || !(value instanceof Boolean completed)) {
       return ResponseEntity.badRequest().body(Map.of("error", "taskId and completed are required"));
     }
-    jdbc.update("MERGE INTO task_completion (task_id, completed, completed_at) KEY(task_id) VALUES (?, ?, ?)",
-        taskId, completed, completed ? Instant.now() : null);
+    jdbc.update("""
+      INSERT INTO task_completion (task_id, completed, completed_at)
+      VALUES (?, ?, ?)
+      ON CONFLICT (task_id) DO UPDATE SET
+        completed = EXCLUDED.completed,
+        completed_at = EXCLUDED.completed_at
+      """, taskId, completed, completed ? Instant.now() : null);
     return ResponseEntity.ok(Map.of("taskId", taskId, "completed", completed));
   }
 }
