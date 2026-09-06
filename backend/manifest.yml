@@ -7,5 +7,7 @@ applications:
     path: target/tracker-api-0.1.0.jar
     buildpacks:
       - sap_java_buildpack_jakarta
+    services:
+      - postgres
     env:
       JBP_CONFIG_SAP_MACHINE_JRE: '{ version: 21.+ }'
