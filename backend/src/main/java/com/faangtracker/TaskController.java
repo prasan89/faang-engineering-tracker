@@ -1,5 +1,6 @@
 package com.faangtracker;
 
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Map;
 import org.springframework.http.ResponseEntity;
@@ -26,13 +27,14 @@ public class TaskController {
     if (!(id instanceof String taskId) || taskId.isBlank() || !(value instanceof Boolean completed)) {
       return ResponseEntity.badRequest().body(Map.of("error", "taskId and completed are required"));
     }
+    Timestamp completedAt = completed ? Timestamp.from(Instant.now()) : null;
     jdbc.update("""
       INSERT INTO task_completion (task_id, completed, completed_at)
       VALUES (?, ?, ?)
       ON CONFLICT (task_id) DO UPDATE SET
         completed = EXCLUDED.completed,
         completed_at = EXCLUDED.completed_at
-      """, taskId, completed, completed ? Instant.now() : null);
+      """, taskId, completed, completedAt);
     return ResponseEntity.ok(Map.of("taskId", taskId, "completed", completed));
   }
 }
