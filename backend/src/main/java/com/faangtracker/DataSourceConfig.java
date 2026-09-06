@@ -24,24 +24,30 @@ public class DataSourceConfig {
         throw new IllegalStateException("No PostgreSQL service credentials found in VCAP_SERVICES");
       }
 
-      String uri = text(credentials, "uri");
-      if (uri == null) uri = text(credentials, "jdbcUrl");
-      if (uri != null && !uri.isBlank()) {
-        return hikari(uri, text(credentials, "username"), text(credentials, "password"));
+      String username = firstText(credentials, "username", "user");
+      String password = text(credentials, "password");
+
+      String writeUrl = text(credentials, "write_url");
+      if (writeUrl != null && writeUrl.startsWith("jdbc:postgresql://")) {
+        return hikari(writeUrl, username, password);
       }
 
       String host = firstText(credentials, "host", "hostname");
       String port = firstText(credentials, "port");
       String database = firstText(credentials, "dbname", "database", "databaseName");
-      String username = firstText(credentials, "username", "user");
-      String password = text(credentials, "password");
-
-      if (host == null || port == null || database == null || username == null || password == null) {
-        throw new IllegalStateException("Incomplete PostgreSQL credentials in VCAP_SERVICES");
+      if (host != null && port != null && database != null && username != null && password != null) {
+        String jdbcUrl = "jdbc:postgresql://" + host + ":" + port + "/" + database + "?sslmode=require";
+        return hikari(jdbcUrl, username, password);
       }
 
-      String jdbcUrl = "jdbc:postgresql://" + host + ":" + port + "/" + database + "?sslmode=require";
-      return hikari(jdbcUrl, username, password);
+      String uri = firstText(credentials, "jdbcUrl", "uri");
+      if (uri != null && !uri.isBlank()) {
+        if (uri.startsWith("postgres://")) uri = "jdbc:postgresql://" + uri.substring("postgres://".length());
+        if (uri.startsWith("postgresql://")) uri = "jdbc:postgresql://" + uri.substring("postgresql://".length());
+        return hikari(uri, username, password);
+      }
+
+      throw new IllegalStateException("Incomplete PostgreSQL credentials in VCAP_SERVICES");
     } catch (Exception e) {
       throw new IllegalStateException("Unable to configure PostgreSQL datasource from VCAP_SERVICES", e);
     }
