@@ -38,6 +38,7 @@ export default function DsaPage() {
   const solved = problems.filter((p) => p.status === 'SOLVED').length;
   const review = problems.filter((p) => p.status === 'REVIEW').length;
   const targetPct = Math.min(100, Math.round((solved / TARGET) * 100));
+  const reviewQueue = useMemo(() => problems.filter((p) => p.status === 'REVIEW').slice(0, 8), [problems]);
 
   const patterns = useMemo(() => ['ALL', ...Array.from(new Set(problems.map((p) => p.pattern))).sort()], [problems]);
   const difficulties = useMemo(() => ['ALL', ...Array.from(new Set(problems.map((p) => p.difficulty))).sort()], [problems]);
@@ -107,6 +108,11 @@ export default function DsaPage() {
         <div className="progress"><i style={{ width: `${targetPct}%` }} /></div>
       </section>
 
+      <section className="card review-card">
+        <div className="section-head"><div><h2>Review queue</h2><p className="muted">Problems marked REVIEW should be revisited before they become long-term gaps.</p></div><button className="queue-button" onClick={() => setStatus('REVIEW')}>Open all {review} →</button></div>
+        {reviewQueue.length === 0 ? <p className="empty-state">No review items yet. Mark solved problems as <b>Review</b> when you need another pass.</p> : <div className="review-grid">{reviewQueue.map(p=><button className="review-item" key={p.id} onClick={()=>{setStatus('REVIEW');setSearch(p.title)}}><b>{p.title}</b><span>{p.pattern} · {p.difficulty}</span></button>)}</div>}
+      </section>
+
       <section className="card pattern-card">
         <div className="section-head"><div><h2>Pattern mastery</h2><p className="muted">Your solved percentage by interview pattern.</p></div></div>
         <div className="pattern-grid">
@@ -146,7 +152,7 @@ export default function DsaPage() {
           </div>
         )}
       </section>
-      <footer>DSA persistence: Next.js → Spring Boot → H2</footer>
+      <footer>Persistence: Next.js → Spring Boot → SAP BTP PostgreSQL</footer>
     </main>
   );
 }
