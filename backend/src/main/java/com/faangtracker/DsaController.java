@@ -41,8 +41,14 @@ public class DsaController {
     Instant solvedAt = "SOLVED".equals(nextStatus) ? Instant.now() : null;
 
     jdbc.update("""
-      MERGE INTO dsa_progress (problem_id, status, attempts, time_minutes, notes, solved_at)
-      KEY(problem_id) VALUES (?, ?, ?, ?, ?, ?)
+      INSERT INTO dsa_progress (problem_id, status, attempts, time_minutes, notes, solved_at)
+      VALUES (?, ?, ?, ?, ?, ?)
+      ON CONFLICT (problem_id) DO UPDATE SET
+        status = EXCLUDED.status,
+        attempts = EXCLUDED.attempts,
+        time_minutes = EXCLUDED.time_minutes,
+        notes = EXCLUDED.notes,
+        solved_at = EXCLUDED.solved_at
       """, problemId, nextStatus, attempts, minutes, notes, solvedAt);
 
     return ResponseEntity.ok(Map.of("problemId", problemId, "status", nextStatus));
