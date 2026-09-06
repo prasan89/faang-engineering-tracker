@@ -26,8 +26,8 @@ public class SkillController {
       return ResponseEntity.badRequest().body(Map.of("error", "name is required"));
     }
     name = name.trim();
-    if (name.length() > 100) {
-      return ResponseEntity.badRequest().body(Map.of("error", "name must be 100 characters or less"));
+    if (name.length() > 50) {
+      return ResponseEntity.badRequest().body(Map.of("error", "name must be 50 characters or less"));
     }
     jdbc.update("INSERT INTO custom_skill (name, active) VALUES (?, TRUE) ON CONFLICT (name) DO UPDATE SET active = TRUE", name);
     return ResponseEntity.ok(Map.of("saved", true, "name", name));
