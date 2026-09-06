@@ -1,4 +1,4 @@
-MERGE INTO dsa_problem (id, title, url, difficulty, pattern) KEY(id) VALUES
+INSERT INTO dsa_problem (id, title, url, difficulty, pattern) VALUES
 ('two-sum','Two Sum','https://leetcode.com/problems/two-sum/','Easy','Hash Map'),
 ('valid-anagram','Valid Anagram','https://leetcode.com/problems/valid-anagram/','Easy','Hash Map'),
 ('group-anagrams','Group Anagrams','https://leetcode.com/problems/group-anagrams/','Medium','Hash Map'),
@@ -59,4 +59,9 @@ MERGE INTO dsa_problem (id, title, url, difficulty, pattern) KEY(id) VALUES
 ('top-k-frequent','Top K Frequent Elements','https://leetcode.com/problems/top-k-frequent-elements/','Medium','Heap'),
 ('merge-k-sorted-lists','Merge k Sorted Lists','https://leetcode.com/problems/merge-k-sorted-lists/','Hard','Heap'),
 ('task-scheduler','Task Scheduler','https://leetcode.com/problems/task-scheduler/','Medium','Heap'),
-('meeting-rooms-ii','Meeting Rooms II','https://leetcode.com/problems/meeting-rooms-ii/','Medium','Heap');
+('meeting-rooms-ii','Meeting Rooms II','https://leetcode.com/problems/meeting-rooms-ii/','Medium','Heap')
+ON CONFLICT (id) DO UPDATE SET
+  title = EXCLUDED.title,
+  url = EXCLUDED.url,
+  difficulty = EXCLUDED.difficulty,
+  pattern = EXCLUDED.pattern;
