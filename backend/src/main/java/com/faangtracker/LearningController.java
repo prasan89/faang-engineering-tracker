@@ -30,8 +30,9 @@ public class LearningController {
     out.put("sessionCount", scalar("SELECT COUNT(*) FROM study_session"));
     out.put("bestDay", jdbc.queryForList("SELECT session_date, SUM(minutes) AS minutes FROM study_session GROUP BY session_date ORDER BY minutes DESC, session_date DESC LIMIT 1"));
     out.put("bySkill", jdbc.queryForList("SELECT track AS skill, SUM(minutes) AS minutes, COUNT(*) AS sessions, MAX(session_date) AS last_studied FROM study_session GROUP BY track ORDER BY minutes DESC"));
+    out.put("weekBySkill", jdbc.queryForList("SELECT track AS skill, SUM(minutes) AS minutes FROM study_session WHERE session_date >= ? GROUP BY track ORDER BY minutes DESC", Date.valueOf(weekStart)));
     out.put("activity", jdbc.queryForList("SELECT session_date AS date, SUM(minutes) AS minutes FROM study_session WHERE session_date >= ? GROUP BY session_date ORDER BY session_date", Date.valueOf(today.minusDays(29))));
-    out.put("growth", jdbc.queryForList("SELECT DATE_TRUNC('week', session_date)::date AS week, track AS skill, SUM(minutes) AS minutes FROM study_session GROUP BY DATE_TRUNC('week', session_date), track ORDER BY week, skill"));
+    out.put("growth", jdbc.queryForList("SELECT session_date AS date, track AS skill, minutes FROM study_session ORDER BY session_date, track"));
     out.put("weeklyTargetMinutes", 600);
     out.put("streak", streak());
     return out;
