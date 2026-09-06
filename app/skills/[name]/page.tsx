@@ -1,0 +1,11 @@
+'use client';
+import { useEffect, useState } from 'react';
+
+type Session={id:number;session_date:string;minutes:number;notes?:string|null};
+const fmt=(v?:string)=>v?new Date(`${v}T00:00:00`).toLocaleDateString(undefined,{day:'2-digit',month:'short',year:'numeric'}):'—';
+export default function SkillDetail({params}:{params:Promise<{name:string}>}){
+ const[name,setName]=useState('');const[data,setData]=useState<any>(null);const[error,setError]=useState(false);
+ useEffect(()=>{params.then(async p=>{const n=decodeURIComponent(p.name);setName(n);try{const r=await fetch(`/api/learning/skills/${encodeURIComponent(n)}`,{cache:'no-store'});if(!r.ok)throw new Error();setData(await r.json())}catch{setError(true)}})},[params]);
+ const summary=data?.summary?.[0];
+ return <main><header className="topbar"><div><div className="eyebrow">SKILL DETAIL</div><h1>{name||'Skill'}</h1><p>Focused learning history and effort for this skill.</p></div><a className="back-link" href="/learning">← Learning HQ</a></header>{error&&<div className="notice">Could not load this skill.</div>}{!data?<section className="card"><p className="muted">Loading…</p></section>:<><section className="dsa-stats"><div className="metric"><span>Total effort</span><strong>{(Number(summary?.minutes||0)/60).toFixed(1)}h</strong><small>logged study time</small></div><div className="metric"><span>Sessions</span><strong>{summary?.sessions||0}</strong><small>study sessions</small></div><div className="metric"><span>Current streak</span><strong>{data.streak}d</strong><small>consecutive days</small></div><div className="metric"><span>Last studied</span><strong>{fmt(summary?.last_studied)}</strong><small>most recent session</small></div></section><section className="card"><div className="section-head"><div><h2>Learning log</h2><p className="muted">Every session recorded against {name}.</p></div><a className="back-link" href="/">Log session</a></div>{(data.recent as Session[]).map(s=><article className="session-log" key={s.id}><div><b>{fmt(s.session_date)}</b><span>{(s.minutes/60).toFixed(1)}h · {s.minutes} min</span></div>{s.notes&&<p>{s.notes}</p>}</article>)}{data.recent.length===0&&<p className="muted">No sessions yet. Log your first session from the tracker.</p>}</section></>}</main>;
+}
