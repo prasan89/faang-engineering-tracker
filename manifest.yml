@@ -7,7 +7,7 @@ applications:
     stack: cflinuxfs5
     buildpacks:
       - nodejs_buildpack
-    command: npm run build && npm run start -- -p $PORT
+    command: npm run start -- -p $PORT
     env:
       NODE_ENV: production
       BACKEND_URL: https://faang-engineering-tracker-api-insightful-bongo-go.cfapps.us10-001.hana.ondemand.com
