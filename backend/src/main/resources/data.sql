@@ -60,8 +60,4 @@ INSERT INTO dsa_problem (id, title, url, difficulty, pattern) VALUES
 ('merge-k-sorted-lists','Merge k Sorted Lists','https://leetcode.com/problems/merge-k-sorted-lists/','Hard','Heap'),
 ('task-scheduler','Task Scheduler','https://leetcode.com/problems/task-scheduler/','Medium','Heap'),
 ('meeting-rooms-ii','Meeting Rooms II','https://leetcode.com/problems/meeting-rooms-ii/','Medium','Heap')
-ON CONFLICT (id) DO UPDATE SET
-  title = EXCLUDED.title,
-  url = EXCLUDED.url,
-  difficulty = EXCLUDED.difficulty,
-  pattern = EXCLUDED.pattern;
+ON CONFLICT (id) DO NOTHING;
